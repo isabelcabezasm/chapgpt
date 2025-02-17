@@ -1,0 +1,31 @@
+{
+    "name": "chap_gpt",
+    "dockerComposeFile": "docker-compose.yaml",
+    "service": "devcontainer",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "remoteUser": "vscode",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "EditorConfig.EditorConfig",
+          "ms-python.python",
+          "GitHub.copilot",
+          "ms-toolsai.jupyter",
+          "charliermarsh.ruff",
+          "stkb.rewrap",
+          "timonwong.shellcheck",
+          "humao.rest-client",
+          "esbenp.prettier-vscode",
+          "hashicorp.terraform" 
+        ]
+      }
+    },
+    "features": {
+      "ghcr.io/devcontainers/features/github-cli:1": {},
+      "ghcr.io/devcontainers/features/node:1": {},
+      "ghcr.io/devcontainers/features/azure-cli:1": {},
+      "ghcr.io/devcontainers/features/terraform:1": {}
+
+    }, 
+    "postCreateCommand": "pip install --upgrade pip && pip install -r .devcontainer/requirements.txt"
+  }
