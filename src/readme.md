@@ -37,11 +37,17 @@ where the `brand_id` is a number that identifies the brand (parent key for the c
 and the `cap-num` is the number of the cap for this brand (sub-key or child key).
 So the path of each cap image is like (E.g.)   `E/E-EL/Einsiedler/1621-1.jpg`
 
-
-
-
 ### Environment variables
 
 The `.env` file is not commited.
 Copy `sample.env` as `.env` and fill the needed information.
+
+### Cosmos DB
+
+Only available "clickops":
+
+- Create Cosmos DB for NoSQL
+- Enable the feature "Vector Search for NoSQL API" 
+- Create a new container. Partition key `/country`, no PK (takes by default /id)
+- Container Vector Policy -> path `/embeddings`, type `float32`, distance `cosine`, dimension `2048`and `diskANN` as vector index.
 

@@ -10,9 +10,13 @@ def log(message: str, force_log: bool = False) -> None:
     if verbose or force_log:
         print(message, file=sys.stderr)
 
+def read_from_storage_and_save_in_cosmos(only_brands:list=None, only_caps:list=None):
+
+    csv_file = "/db/sample.csv"
+
+
 def main():
-    print("Hello World")
-    log("This is a log message")
+    read_from_storage_and_save_in_cosmos()    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Helper script to create a embedding from a image")

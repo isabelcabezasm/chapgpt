@@ -178,3 +178,4 @@ resnet_container/resnet50_embeddings.onnx
 src/robot.jpeg
 embeddings/*
 **/config/config.yaml
+db/chapas.csv
