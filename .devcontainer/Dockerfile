@@ -7,7 +7,7 @@ USER vscode
 # Set the container user
 ENV USER=vscode
 
-WORKDIR /src
+WORKDIR .
 
 COPY . /src
 
