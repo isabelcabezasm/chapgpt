@@ -7,16 +7,17 @@
     "customizations": {
       "vscode": {
         "extensions": [
-          "EditorConfig.EditorConfig",
-          "ms-python.python",
-          "GitHub.copilot",
-          "ms-toolsai.jupyter",
-          "charliermarsh.ruff",
-          "stkb.rewrap",
-          "timonwong.shellcheck",
-          "humao.rest-client",
-          "esbenp.prettier-vscode",
-          "hashicorp.terraform" 
+            "EditorConfig.EditorConfig",
+            "ms-python.python",
+            "GitHub.copilot",
+            "ms-toolsai.jupyter",
+            "charliermarsh.ruff",
+            "stkb.rewrap",
+            "timonwong.shellcheck",
+            "humao.rest-client",
+            "esbenp.prettier-vscode",
+            "hashicorp.terraform",
+            "ms-azuretools.vscode-docker" 
         ]
       }
     },
@@ -27,5 +28,5 @@
       "ghcr.io/devcontainers/features/terraform:1": {}
 
     }, 
-    "postCreateCommand": "pip install --upgrade pip && pip install -r .devcontainer/requirements.txt"
+    "postCreateCommand": ".devcontainer/post-create.sh"
   }

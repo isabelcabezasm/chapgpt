@@ -1,9 +1,7 @@
 name: chap_gpt
 services:
   devcontainer:  
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: mcr.microsoft.com/devcontainers/python:3.12      
     command: sleep infinity
     networks:
       - default
