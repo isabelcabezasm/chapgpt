@@ -28,6 +28,9 @@ def parse_image_name(image_name) -> tuple:
 
     try:
         (brand_id, cap_num)  = path[len(path)-1][:-4].split("-")
+        assert brand_id
+        assert cap_num
+        
         # check if is a "chapón"
         if cap_num.lower().endswith("ch"):
             cap_num = cap_num[:-3]
