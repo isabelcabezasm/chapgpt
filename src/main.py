@@ -45,8 +45,11 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
     # Read CSV file 
     caps_csv = pd.read_csv(csv_file_path)
 
-    list_images = AzureStorageClient().list_blobs()
-
+    try:
+        list_images = AzureStorageClient().list_blobs()
+    except Exception as e:
+        log(f"Failed to list blobs: {e}", force_log=True)
+        return
     for image in list_images:
         if image.name.endswith(".jpg"):            
             brand_id, cap_num = parse_image_name(image.name)
