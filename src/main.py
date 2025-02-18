@@ -54,6 +54,13 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
                 log(f"Cap not found: {brand_id}-{cap_num}: {image.name}")
                 continue
 
+            if only_brands: # if only_brands is set, skip caps not in the list
+                if int(brand_id) not in only_brands:
+                    continue
+            if only_brands and only_caps: # if only_caps is set, skip caps not in the list
+                if int(cap_num) not in only_caps and int(brand_id) not in only_brands:
+                    continue
+
             image_bytes = AzureStorageClient().download_blob(image.name)            
 
             cap = Cap(
