@@ -1,9 +1,7 @@
-import sys
+from common import log
 from azure.storage.blob import BlobServiceClient, ContainerClient
 import os
 
-def log(message: str) -> None:
-    print(message, file=sys.stderr)
 
 def service_client() -> BlobServiceClient:    
     # create blob service from connection string

@@ -1,26 +1,14 @@
 from transformations import convert_image_to_base64_from_blob
 from embeddings import get_embedding_from_blob
 from storage import AzureStorageClient
+from common import log
 from cap import Cap
 
 from dotenv import load_dotenv
 from pathlib import Path
 import pandas as pd
-import argparse
-import sys
-
-
-
-
-
 
 load_dotenv()
-
-verbose = False
-
-def log(message: str, force_log: bool = False) -> None:
-    if verbose or force_log:
-        print(message, file=sys.stderr)
 
 def parse_image_name(image_name) -> tuple:
     # get brand_id and cap_num from image name
@@ -89,9 +77,4 @@ def main():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Helper script to create a embedding from a image")
-    _ = parser.add_argument("--verbose", action="store_true", help="Enable verbose logs")
-    args = parser.parse_args()
-    if args.verbose:
-        verbose = True
     main()
