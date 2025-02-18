@@ -1,0 +1,10 @@
+Pillow==11.1.0
+keras==3.8.0
+torch==2.4
+torchvision==0.19
+fastapi==0.115.6
+python-multipart==0.0.20
+uvicorn==0.34.0
+tensorflow==2.18.0
+opencv-python==4.11.0.86
+pandas==2.2.3

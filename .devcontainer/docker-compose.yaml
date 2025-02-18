@@ -1,11 +1,21 @@
 name: chap_gpt
 services:
   devcontainer:  
-    image: mcr.microsoft.com/devcontainers/python:3.12      
+    image: mcr.microsoft.com/devcontainers/python:3.12
+    depends_on:
+      - embeddings
     command: sleep infinity
     networks:
       - default
     volumes:
       - ../..:/workspaces:cached
+  embeddings:
+    build:
+      context: ../resnet_container
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - default
 networks:
   default:

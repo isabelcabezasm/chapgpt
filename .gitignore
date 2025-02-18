@@ -178,4 +178,9 @@ resnet_container/resnet50_embeddings.onnx
 src/robot.jpeg
 embeddings/*
 **/config/config.yaml
+
+# caps db
 db/chapas.csv
+
+# the trained model
+resnet_container/yolo5_finetunned/yolo5_caps.pt
