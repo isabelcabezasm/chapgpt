@@ -51,3 +51,40 @@ Only available "clickops":
 - Create a new container. Partition key `/country`, no PK (takes by default /id)
 - Container Vector Policy -> path `/embeddings`, type `float32`, distance `cosine`, dimension `2048`and `diskANN` as vector index.
 
+#### Permissions to the cosmos db
+
+ref: https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/tutorial-vm-managed-identities-cosmos?tabs=azure-cli#grant-access
+
+Check the id of the 
+
+```bash
+az cosmosdb sql role definition list --account-name <account-name> --resource-group cap_comparer
+```
+
+Check the ID of the role with name "Cosmos DB Built-in Data Contributor"
+Probably '00000000-0000-0000-0000-000000000002'
+
+The principal id, in my case is the `Object Id` of my user in Entra.
+
+```bash
+resourceGroupName='<myResourceGroup>'
+accountName='<myCosmosAccount>'
+readOnlyRoleDefinitionId='00000000-0000-0000-0000-000000000002' # This is the ID of the Cosmos DB Built-in Data contributor role definition
+principalId="1111111-1111-11111-1111-11111111" # This is the object ID of the managed identity.
+
+az cosmosdb sql role assignment create --account-name $accountName --resource-group $resourceGroupName --scope "/" --principal-id $principalId --role-definition-id $readOnlyRoleDefinitionId
+```
+
+Result:
+
+```json
+{
+  "id": "/subscriptions/3fc8226e-ee1e-4b95-a896-aa27789c6cc6/resourceGroups/cap_comparer/providers/Microsoft.DocumentDB/databaseAccounts/cosmosdbforchapgpt/sqlRoleAssignments/12d50ec2-98fa-47e5-8463-e97326c47d89",
+  "name": "12d50ec2-98fa-47e5-8463-e97326c47d89",
+  "principalId": "d2597c80-39ac-40db-b46b-ba4dfa2acc1b",
+  "resourceGroup": "cap_comparer",
+  "roleDefinitionId": "/subscriptions/3fc8226e-ee1e-4b95-a896-aa27789c6cc6/resourceGroups/cap_comparer/providers/Microsoft.DocumentDB/databaseAccounts/cosmosdbforchapgpt/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002",
+  "scope": "/subscriptions/3fc8226e-ee1e-4b95-a896-aa27789c6cc6/resourceGroups/cap_comparer/providers/Microsoft.DocumentDB/databaseAccounts/cosmosdbforchapgpt",
+  "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments"
+}
+``` 

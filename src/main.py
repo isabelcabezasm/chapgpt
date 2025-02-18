@@ -1,3 +1,4 @@
+from cosmosdb import insert_cap
 from transformations import convert_image_to_base64_from_blob
 from embeddings import get_embedding_from_blob
 from storage import AzureStorageClient
@@ -69,8 +70,8 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
                 base64=convert_image_to_base64_from_blob(image_bytes)
             )
 
-            print(cap.path)
-
+            # insert cap in cosmos
+            insert_cap(cap)
 
 def main():
     read_from_storage_and_save_in_cosmos(csv_file_path="../db/chapas.csv")    
