@@ -21,8 +21,7 @@ class AzureStorageClient:
         try:
             return self.container_client.list_blobs(results_per_page=limit)
         except Exception as e:
-            print(f"Error listing blobs: {e}")
-
+            logging.error(f"Error listing blobs: {e}")
     def download_blob(self, blob: str) -> bytes:
         blob_client = self.container_client.get_blob_client(blob)
         return blob_client.download_blob().readall()
