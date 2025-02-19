@@ -1,7 +1,6 @@
-from common import log
 from azure.storage.blob import BlobServiceClient, ContainerClient
+from caps_common.common import log
 import os
-
 
 def service_client() -> BlobServiceClient:    
     # create blob service from connection string
