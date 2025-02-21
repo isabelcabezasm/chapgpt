@@ -5,10 +5,12 @@ from dotenv import load_dotenv
 from pathlib import Path
 import pandas as pd
 
-from caps_common.cosmosdb import get_container, insert_cap
-from caps_common.embeddings import get_embedding_from_blob
-from caps_common.common import log
-from caps_common.cap import Cap
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from shared_caps.cosmosdb import get_container, insert_cap
+from shared_caps.embeddings import get_embedding_from_blob
+from shared_caps.common import log
+from shared_caps.cap import Cap
 
 
 load_dotenv()
@@ -88,7 +90,8 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
                 insert_cap(cap, container)
         except Exception as e:          
             log(f"Failed inserting cap {image.name}. Error:{e}. ")
-       
+
+
 def main():
     read_from_storage_and_save_in_cosmos(csv_file_path="../db/chapas.csv")    
 

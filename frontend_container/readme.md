@@ -66,3 +66,12 @@ To debug the application, you can use the next configuration from the `launch.js
 ´´´
 
 
+
+
+### Azure Open AI Permissions
+
+(debugging in local)
+Give "Cognitive Services OpenAI Contributor" role  to the user
+
+openai.AuthenticationError: 
+Error code: 401 - {'error': {'code': 'PermissionDenied', 'message': 'Principal does not have access to API/Operation.'}}

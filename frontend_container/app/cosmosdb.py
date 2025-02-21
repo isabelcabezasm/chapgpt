@@ -1,8 +1,8 @@
 import os
 from azure.cosmos import CosmosClient, exceptions, ContainerProxy
 
-from caps_common.cap import Cap
-import caps_common.common as common
+from cap import Cap
+import common
 
 # create type called Container that wrapps a ContainerProxy
 Container = ContainerProxy

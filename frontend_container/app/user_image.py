@@ -1,7 +1,7 @@
-from caps_common.cap import Cap
-from caps_common.embeddings import get_embedding_from_blob
-from caps_common.cosmosdb import search_similar_caps
-from caps_common.object_recognition import search_for_a_cap_from_blob
+from cap import Cap
+from embeddings import get_embedding_from_blob
+from cosmosdb import search_similar_caps
+from object_recognition import search_for_a_cap_from_blob
 
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 from PIL import Image

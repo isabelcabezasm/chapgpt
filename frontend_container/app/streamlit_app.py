@@ -1,6 +1,3 @@
-from caps_common.common import Message, FoundCapMessage, FoundSimilarCapsMessage, ImageMessage
-from caps_common.cap import Cap
-
 import base64
 import streamlit as st
 from openai_client import ask_bot
@@ -10,6 +7,13 @@ from streamlit_cropper import st_cropper
 import yaml
 from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
+
+from common import Message, FoundCapMessage, FoundSimilarCapsMessage, ImageMessage
+from cap import Cap
+
+from dotenv import load_dotenv
+load_dotenv()
+
 
 
 # Crop dialog 
@@ -48,8 +52,6 @@ def crop_image():
 st.set_page_config(page_title="💬 ChapGPT", page_icon="img/chapgpt.gif")
 
 # Load the configuration file
-import os
-st.write(os.getcwd())
 with open('config/config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
@@ -108,10 +110,6 @@ if cap_image and not st.session_state.get("image") or st.session_state.get("imag
 if cap_image:
     if st.sidebar.button("Crop the image"):
         crop_image()
-
-
-
-
 
 
 # Store LLM generated responses

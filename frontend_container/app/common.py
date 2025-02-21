@@ -2,7 +2,7 @@ from enum import Enum
 import sys
 from typing import Any
 from azure.identity import DefaultAzureCredential
-from caps_common.cap import Cap
+from cap import Cap
 
 def log(message: str) -> None:
     print(message, file=sys.stderr)

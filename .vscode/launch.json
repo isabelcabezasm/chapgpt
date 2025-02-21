@@ -16,10 +16,10 @@
             "name": "main",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/main.py",
+            "program": "${workspaceFolder}/script/main.py",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "cwd": "${workspaceFolder}/src/",
+            "cwd": "${workspaceFolder}/script/",
             "args": [
                 "--verbose",
             ]

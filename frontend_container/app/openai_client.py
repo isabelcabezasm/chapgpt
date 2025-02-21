@@ -1,5 +1,5 @@
-from caps_common.common import Message, Role, ImageMessage, FoundCapMessage, FoundSimilarCapsMessage
-from caps_common.cap import Cap
+from common import Message, Role, ImageMessage, FoundCapMessage, FoundSimilarCapsMessage
+from cap import Cap
 
 import PIL
 from dotenv import load_dotenv
@@ -37,7 +37,7 @@ def connect_openai():
     openai_client = AzureOpenAI(  
         azure_endpoint=endpoint,  
         azure_ad_token_provider=token_provider,  
-        api_version="2024-05-01-preview",  
+        api_version="2024-08-01-preview",  
         http_client=http_client,
     )      
     return openai_client
