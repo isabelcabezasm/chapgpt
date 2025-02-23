@@ -16,12 +16,26 @@
             "name": "main",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/main.py",
+            "program": "${workspaceFolder}/script/main.py",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "cwd": "${workspaceFolder}/src/",
+            "cwd": "${workspaceFolder}/script/",
             "args": [
                 "--verbose",
+            ]
+        },
+        {
+            "name": "Streamlit",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "streamlit",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "jinja": true,
+            "cwd": "${workspaceFolder}/frontend_container/app/",
+            "args": [
+                "run",
+                "${workspaceFolder}/frontend_container/app/streamlit_app.py",
             ]
         }
     ]

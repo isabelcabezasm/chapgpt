@@ -1,14 +1,17 @@
-from cosmosdb import get_container, insert_cap
 from transformations import convert_image_to_base64_from_blob
-from embeddings import get_embedding_from_blob
 from storage import AzureStorageClient
-from common import log
-from cap import Cap
 
-from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
 import pandas as pd
+
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from shared_caps.cosmosdb import get_container, insert_cap
+from shared_caps.embeddings import get_embedding_from_blob
+from shared_caps.common import log
+from shared_caps.cap import Cap
+
 
 load_dotenv()
 
@@ -87,7 +90,8 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
                 insert_cap(cap, container)
         except Exception as e:          
             log(f"Failed inserting cap {image.name}. Error:{e}. ")
-       
+
+
 def main():
     read_from_storage_and_save_in_cosmos(csv_file_path="../db/chapas.csv")    
 

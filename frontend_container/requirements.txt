@@ -1,0 +1,16 @@
+python-dotenv==1.0.1
+hugchat==0.0.8
+azure-identity==1.19.*
+azure-cosmos==4.9.0
+requests==2.32.3
+pandas==2.2.3
+pillow==10.4.0
+opencv-python==4.11.0.86
+Pillow
+altair
+streamlit==1.42.0
+streamlit-authenticator==0.4.1
+streamlit-cropper==0.2.2
+openai
+
+
