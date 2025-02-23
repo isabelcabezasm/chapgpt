@@ -48,7 +48,7 @@ Replace `streamlit_app.py` with the name of your Streamlit application file.
 
 To debug the application, you can use the next configuration from the `launch.json`
 
-´´´json
+```json
         {
             "name": "Streamlit",
             "type": "debugpy",
