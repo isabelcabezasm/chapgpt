@@ -24,15 +24,14 @@ def store_cropped_image(cropped_img):
     st.session_state.cropped_image = {"image": cropped_img}
     st.session_state.messages.append(ImageMessage(role="user", text_content="Yes, that is the cap", image=cropped_img))
 
-def the_cap_is_found():
+def the_cap_is_found(cap_image):
     img = Image.open(cap_image)
     cropped_img = crop_image_with_coords(img)
     store_cropped_image(cropped_img)
 
 # Crop dialog 
 @st.dialog("Crop the image")
-def crop_image():
-
+def crop_image(cap_image):
     if cap_image:
         img = Image.open(cap_image)
         # Get a cropped image from the frontend
@@ -53,8 +52,7 @@ def crop_image():
             st.rerun()
             #  TODO: add spinner
             # st.spinner("Processing...")
-
-            
+          
     else:
         st.error("No image uploaded")
  
@@ -177,9 +175,9 @@ if st.session_state.messages[-1].role != "assistant":
                     if answer.points:
                         button_yes, button_no = st.columns(2)
                         with button_yes:
-                            st.button("Yep! That is the cap", on_click=the_cap_is_found)
+                            st.button("Yep! That is the cap", on_click=the_cap_is_found, args=(cap_image,))
                         with button_no:
-                            st.button("Let me crop the image", on_click=crop_image)
+                            st.button("Let me crop the image", on_click=crop_image, args=(cap_image,))
                     else:
                         st.button("Let me crop the image", on_click=crop_image)            
                 case Message():
