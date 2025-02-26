@@ -15,19 +15,30 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def crop_image_with_coords(img):
+    found_coords = (st.session_state.coords[0], st.session_state.coords[2], st.session_state.coords[1], st.session_state.coords[3])
+    cropped_img = st_cropper(img, default_coords=found_coords, realtime_update=True, box_color='#0000FF', aspect_ratio=(1,1))
+    return cropped_img
+
+def store_cropped_image(cropped_img):
+    st.session_state.cropped_image = {"image": cropped_img}
+    st.session_state.messages.append(ImageMessage(role="user", text_content="Yes, that is the cap", image=cropped_img))
+
+def the_cap_is_found(cap_image):
+    img = Image.open(cap_image)
+    cropped_img = crop_image_with_coords(img)
+    store_cropped_image(cropped_img)
 
 # Crop dialog 
 @st.dialog("Crop the image")
-def crop_image():
+def crop_image(cap_image):
     if cap_image:
         img = Image.open(cap_image)
         # Get a cropped image from the frontend
         # use default_coords
         # The (xl, xr, yt, yb) coords to use by default
         if len(st.session_state.coords) > 0:     
-            found_coords = (st.session_state.coords[0], st.session_state.coords[2], st.session_state.coords[1], st.session_state.coords[3])
-            cropped_img = st_cropper(img, default_coords=found_coords, realtime_update=True, box_color='#0000FF', aspect_ratio=(1,1))
-
+            cropped_img = crop_image_with_coords(img)
         else:
             cropped_img = st_cropper(img, realtime_update=True, box_color='#0000FF', aspect_ratio=(1,1))
 
@@ -37,13 +48,11 @@ def crop_image():
         st.image(cropped_img)
 
         if st.button("Submit"):
-            st.session_state.cropped_image = {"image": cropped_img}
-            st.session_state.messages.append(ImageMessage(role="user", text_content="", image=cropped_img))
+            store_cropped_image(cropped_img)
             st.rerun()
             #  TODO: add spinner
             # st.spinner("Processing...")
-
-            
+          
     else:
         st.error("No image uploaded")
  
@@ -86,15 +95,8 @@ with st.sidebar:
 cap_image = st.sidebar.file_uploader("Upload image", type=["jpg", "jpeg", "png"])
 if cap_image and not st.session_state.get("image") or st.session_state.get("image") != cap_image: # only the first time or if the image changes
     st.session_state.image = cap_image
-    st.sidebar.image(cap_image)
     st.sidebar.write("Image uploaded successfully!")    
     st.session_state.messages.append(ImageMessage(role="user", text_content="Image uploaded", image=cap_image))
-
-# Crop the image
-if cap_image:
-    if st.sidebar.button("Crop the image"):
-        crop_image()
-
 
 # Store LLM generated responses
 if "messages" not in st.session_state.keys():
@@ -162,10 +164,22 @@ if st.session_state.messages[-1].role != "assistant":
                     show_list_cap_images(answer.caps)
                     st.write(answer.text)
                 case FoundCapMessage():
-                    #  show the image
+                    # In this message the bot should show the image with the cap in the square
+                    # but sometimes the cap has not been found.
                     st.image(answer.image, width=300)
                     st.session_state.coords = answer.points 
-                    st.write(answer.text)                   
+                    st.write(answer.text)  
+                    # only if the bot thinks that it has found the cap, give to the user
+                    # the possibility to continue with that imag cropped.
+                    # if not, he/she will need to select the cap in the image manually.     
+                    if answer.points:
+                        button_yes, button_no = st.columns(2)
+                        with button_yes:
+                            st.button("Yep! That is the cap", on_click=the_cap_is_found, args=(cap_image,))
+                        with button_no:
+                            st.button("Let me crop the image", on_click=crop_image, args=(cap_image,))
+                    else:
+                        st.button("Let me crop the image", on_click=crop_image)            
                 case Message():
                     if "upload" in answer.text.lower():
                         response = "Please upload the cap image using the uploader in the sidebar."
