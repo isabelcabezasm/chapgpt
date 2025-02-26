@@ -31,6 +31,8 @@ def parse_image_name(image_name) -> tuple:
             cap_num = cap_num[:-1]
         if cap_num.lower().endswith(" "):
             cap_num = cap_num[:-1]
+        if cap_num.lower().endswith("."):
+            cap_num = cap_num[:-1]
         if cap_num.lower().endswith("chapon"):
             cap_num = cap_num[:-7]
         if not brand_id.isdigit() or not cap_num.isdigit():
@@ -69,7 +71,7 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
                     log(f"Cap not found: {brand_id}-{cap_num}: {image.name}")
                     continue
 
-                if only_brands: # if only_brands is set, skip caps not in the list
+                if only_brands and not only_caps: # if only_brands is set, skip caps not in the list
                     if int(brand_id) not in only_brands:
                         continue
                 if only_brands and only_caps: # if only_caps is set, skip caps not in the list
@@ -99,7 +101,7 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
 
 
 def main():
-    read_from_storage_and_save_in_cosmos(csv_file_path="../db/chapas.csv", only_brands=[4775, 4722])    
+    read_from_storage_and_save_in_cosmos(csv_file_path="../db/chapas.csv", only_brands=[], only_caps=[])    
 
 
 if __name__ == "__main__":
