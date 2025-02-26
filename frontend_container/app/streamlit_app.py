@@ -179,7 +179,7 @@ if st.session_state.messages[-1].role != "assistant":
                         with button_no:
                             st.button("Let me crop the image", on_click=crop_image, args=(cap_image,))
                     else:
-                        st.button("Let me crop the image", on_click=crop_image)            
+                        st.button("Let me crop the image", on_click=crop_image, args=(cap_image,))            
                 case Message():
                     if "upload" in answer.text.lower():
                         response = "Please upload the cap image using the uploader in the sidebar."
