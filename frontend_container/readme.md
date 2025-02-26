@@ -46,6 +46,12 @@ Replace `streamlit_app.py` with the name of your Streamlit application file.
 
 ### Debugging
 
+The developer container doesn't have initially the libraries needed for debug the frontend_container, so you would need to install them.
+
+```
+pip install -r frontend_container/requirements.txt
+```
+
 To debug the application, you can use the next configuration from the `launch.json`
 
 ```json
@@ -64,8 +70,6 @@ To debug the application, you can use the next configuration from the `launch.js
             ]
         }
 ´´´
-
-
 
 
 ### Azure Open AI Permissions
