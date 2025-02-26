@@ -27,6 +27,12 @@ def parse_image_name(image_name) -> tuple:
         # check if is a "chapón"
         if cap_num.lower().endswith("ch"):
             cap_num = cap_num[:-3]
+        if cap_num.lower().endswith("g"):
+            cap_num = cap_num[:-1]
+        if cap_num.lower().endswith(" "):
+            cap_num = cap_num[:-1]
+        if cap_num.lower().endswith("chapon"):
+            cap_num = cap_num[:-7]
         if not brand_id.isdigit() or not cap_num.isdigit():
             log(f"Invalid brand_id or cap_num in {image_name}")
     except ValueError:
@@ -67,7 +73,7 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
                     if int(brand_id) not in only_brands:
                         continue
                 if only_brands and only_caps: # if only_caps is set, skip caps not in the list
-                    if int(cap_num) not in only_caps and int(brand_id) not in only_brands:
+                    if not (int(cap_num) in only_caps and int(brand_id) in only_brands):
                         continue
                 
                 image_bytes = AzureStorageClient().download_blob(image.name)            
@@ -93,7 +99,7 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
 
 
 def main():
-    read_from_storage_and_save_in_cosmos(csv_file_path="../db/chapas.csv")    
+    read_from_storage_and_save_in_cosmos(csv_file_path="../db/chapas.csv", only_brands=[4775, 4722])    
 
 
 if __name__ == "__main__":
