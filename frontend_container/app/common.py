@@ -43,3 +43,8 @@ class FoundSimilarCapsMessage(Message):
     def __init__(self, role: Role, text_content: str, caps: list[Cap]) -> None:
         super().__init__(role, text_content)
         self.caps = caps
+
+class CapInformation(Message):
+    def __init__(self, role: Role, text_content: str, cap: Cap) -> None:
+        super().__init__(role, text_content)
+        self.cap = cap

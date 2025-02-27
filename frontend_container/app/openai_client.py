@@ -1,4 +1,4 @@
-from common import Message, Role, ImageMessage, FoundCapMessage, FoundSimilarCapsMessage
+from common import Message, FoundCapMessage, FoundSimilarCapsMessage
 from cap import Cap
 
 import PIL
@@ -7,7 +7,7 @@ import os
 import httpx
 from openai import AzureOpenAI
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider 
-from user_image import search_similar_caps, search_similar_caps_cropped_cap, search_the_cap_in_the_image
+from user_image import search_similar_caps_cropped_cap, search_the_cap_in_the_image
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 import cv2
 import numpy as np
@@ -116,12 +116,27 @@ def ask_for_information() -> str:
         return "Por favor, proporciona la información que deseas saber sobre la chapa de botella."
     return "Please provide the information you want to know about the bottle crown cap."
 
+def get_digit_from_message(message: str) -> int:
+    return int(''.join(filter(str.isdigit, message)))
 
-def confirm_cap_found() -> str:
+def get_cap_from_similar_caps_message(cap_number:int) -> Cap:
+    for message in reversed(chat_history):
+        if message.role == "assistant" and isinstance(message, FoundSimilarCapsMessage):
+            return message.caps[cap_number-1]
+    return None
+
+def confirm_cap_found(cap_number:int) -> str:
+    cap = get_cap_from_similar_caps_message(cap_number)
+
     if language == "spanish":
-        return "¡Genial! Tengo la chapa! Pendiente: Dar la información de la chapa."
-    return "Cool! We found the cap!! \nTBD: Information about the cap"
-
+        answer = "¡Genial! Tengo la chapa!"
+        if cap:
+            answer = answer + f" La marca es {cap.brand} y el pais es {cap.country}"	
+    answer =  "Cool! We found the cap!!"
+    if cap:
+        answer = answer + f" The brand is {cap.brand} and the country is {cap.country}"
+    
+    return answer
 
 def no_similar_caps_found() -> str:
     if language == "spanish":
@@ -184,8 +199,6 @@ def ask_bot(user_message: str) -> Message:
             message = "I'm sorry, I could not find any similar cap in the collection."
             save_history_chat_messages(answer := Message("assistant", message))
             return answer
-
-
     elif isinstance(user_message, UploadedFile):
         # it's an uploaded image -> look for the cap.
         borders = search_the_cap_in_the_image(user_message)
@@ -204,7 +217,9 @@ def ask_bot(user_message: str) -> Message:
         # the user message is an string.  
         # first check if there is a number. If there are, it's the cap number
         if any(char.isdigit() for char in user_message): # it's the correct cap.
-            answer = Message("assistant", confirm_cap_found())
+            # get the digit from the message
+            number = get_digit_from_message(user_message)
+            answer = Message("assistant", confirm_cap_found(number))
             save_history_chat_messages(answer)
             return answer
 
