@@ -20,10 +20,6 @@ endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "https://chapgpt.openai.azure.com/
 deployment = os.getenv("DEPLOYMENT_NAME", "gpt-4o-mini")  
 
 chat_history: list[Message] = []
-global language
-
-# Initialize the language to English
-language = "english"
 
 # Initialize Azure OpenAI Service client with Entra ID authentication
 token_provider = get_bearer_token_provider(  
@@ -64,9 +60,9 @@ def give_me_intention(query: str) -> str:
             {
                 "role": "system",
                 "content": """You are an AI assistant that helps to determine the intent of user queries. 
-                The intentions can be 'check if I have a given bottle crown cap in my collection' or 
-                'ask for a bottle crown cap information',
-                'change the language to Spanish' or 
+                The intentions can be 
+                'check if I have a cap in my collection' if he/she ask about a cap in the collection or something like check the cap, 
+                'ask for a bottle crown cap information' if he/she ask about information of a cap,
                 'something else'. 
                 If the user says 'yes' is because the user wants to check if the bottle crown cap is in the collection."""
             },
@@ -77,7 +73,7 @@ def give_me_intention(query: str) -> str:
         ]
     intention =  generate_answer(prompt)
 
-    if "check if I have a given bottle crown cap in my collection" in intention:
+    if "check if I have a cap in my collection" in intention:
         return "check"
     elif "ask for a bottle crown cap" in intention:
         return "information"
@@ -87,37 +83,109 @@ def give_me_intention(query: str) -> str:
         return "unknown"
 
 
-def give_similar_caps() -> str:   
-    if language == "spanish":
-        return "Encontré algunas chapas similares en la colección. Si tu chapa es alguna de ellas, ¿me puedes decir el número? si no, por favor, escribe 'no'"
-    return "I found some similar bottle crown caps in the collection. If your cap is any of them, can you tell me the number? if not, please, write 'no'"
+def give_similar_caps() -> str:  
+    message = get_last_user_message()
+    prompt = [
+            {
+                "role": "system",
+                "content": """You are an AI assistant that helps to check if a collection has a cap that the user gives. 
+                You have found some caps similar to the one the user gave. 
+                You need to ask the user to tell you the number of the cap if he/she finds it, or to say 'no' if he/she does not find it."""
+            },
+            {
+                "role": "user",
+                "content": f"Please, ask the user to tell you the image of the cap in the same language. Message: {message}."
+            }
+        ]
+    return generate_answer(prompt)
 
 
-def ask_for_image() -> str:
-    if language == "spanish":
-        return "Por favor, sube la imagen de la chapa de botella que quieres comprobar desde el menú lateral."
-    return "Please upload the image of the bottle crown cap you want to check."
+def ask_for_image(user_message:str) -> str:
+    prompt = [
+            {
+                "role": "system",
+                "content": """You are an AI assistant tasked with verifying if a collection includes a specific bottle cap provided by the user. 
+                Please prompt the user to upload an image of the cap using the 'Browse files' button located in the sidebar menu.  
+                The cap in Spanish is 'chapa'.              
+                """
+            },
+            {
+                "role": "user",
+                "content": f"{user_message}"
+            }
+        ]
+    return generate_answer(prompt)
 
 
 def cap_found_message() -> str:
-    if language == "spanish":
-        return "¡Encontré una chapa en la imagen! ¿Está bien seleccionada? Puedes mejorar el recorte en el botón 'Crop the image'."
-    return "I found the cap in the image! Is it correctly selected? You can improve the crop in the 'Crop the image' button."
+    prompt = [
+            {
+                "role": "system",
+                "content": """You are an AI assistant that helps to check if a collection has a cap that the user gives. 
+                You have found one cap in an image that the user gave to you, but you're not sure if the selection is correct. 
+                You need to ask the user if the thing selected is the correct cap that he/she wants to check, 
+                and if not, you need to ask him/her to crop the image with the button 'Crop the image'.
+                Only if the message is written in Spanish, note that in Spanish, translate "cap" to "chapa". 
+                Don't translate the answer if the user message is not in Spanish.  
+                """
+            },
+            {
+                "role": "user",
+                "content": get_last_user_message() if get_last_user_message() else "Can you check if Isa has this cap in the collection?"
+            }
+        ]
+    return generate_answer(prompt)
 
 
 def not_cap_found_message() -> str:
-    if language == "spanish":
-        return "Lo siento, no pude encontrar ninguna chapa en la imagen. ¿Puedes seleccionarla con el botón 'Crop the image'?"
-    return "I'm sorry, I could not find any cap in the picture. Can you select it?" 
+    prompt = [
+            {
+                "role": "system",
+                "content": """You are an AI assistant that helps to check if a collection has a cap that the user gives. 
+                You haven't found any cap in the image that the user gave to you. 
+                you need to ask him/her to crop the image with the button 'Crop the image'.
+                The cap in Spanish is 'chapa'.
+                """
+            },
+            {
+                "role": "user",
+                "content": get_last_user_message()
+            }
+        ]
+    return generate_answer(prompt)
 
 
-def ask_for_information() -> str:
-    if language == "spanish":
-        return "Por favor, proporciona la información que deseas saber sobre la chapa de botella."
-    return "Please provide the information you want to know about the bottle crown cap."
+def ask_for_information(user_message: str) -> str:
+    prompt = [
+            {
+                "role": "system",
+                "content": """You are an AI assistant that helps to check if a collection has a cap that the user gives. 
+                The user asked information about a cap, but we don't have that functionality implemented yet.
+                The cap in Spanish is 'chapa'.
+                """
+            },
+            {
+                "role": "user",
+                "content":user_message
+            }
+        ]
+    return generate_answer(prompt)
+
 
 def get_digit_from_message(message: str) -> int:
     return int(''.join(filter(str.isdigit, message)))
+
+
+def get_last_user_message() -> str:
+    for message in reversed(chat_history):
+        # search a real message from the user, not one generated
+        if (message.role == "user" and 
+           "UploadedFile" not in str(message.text) and 
+           "PIL.Image" not in str(message.text)):
+            return message.text
+
+    return None
+
 
 def get_cap_from_similar_caps_message(cap_number:int) -> Cap:
     for message in reversed(chat_history):
@@ -125,29 +193,55 @@ def get_cap_from_similar_caps_message(cap_number:int) -> Cap:
             return message.caps[cap_number-1]
     return None
 
+
 def confirm_cap_found(cap_number:int) -> str:
     cap = get_cap_from_similar_caps_message(cap_number)
 
-    if language == "spanish":
-        answer = "¡Genial! Tengo la chapa!"
-        if cap:
-            answer = answer + f" La marca es {cap.brand} y el pais es {cap.country}"	
     answer =  "Cool! We found the cap!!"
     if cap:
         answer = answer + f" The brand is {cap.brand} and the country is {cap.country}"
     
-    return answer
+    if cap.brand == "LA ALHAMBRA":
+        return "lavincompaeviejo! Es una Alhambra de Graná!"
+
+    return translate(answer)
+
 
 def no_similar_caps_found() -> str:
-    if language == "spanish":
-        return "Loooo siento!! No encontré ninguna chapa similar en la colección."
-    return "I'm sorry, I could not find any similar cap in the collection."
+    prompt = [
+            {
+                "role": "system",
+                "content": """You are an AI assistant that helps to check if a collection has a cap that the user gives. 
+                The user gave you one image with a cap, but you haven't found any similar cap in the collection.    
+                Probably is because the cap is not in the collection.
+                The cap in Spanish is 'chapa'.
+                """
+            },
+            {
+                "role": "user",
+                "content": get_last_user_message()
+            }
+        ]
+    return generate_answer(prompt)
 
 
-def no_understand_message() -> str:
-    if language == "spanish":
-        return "Lo siento, no entendí tu mensaje. ¿Puedes intentarlo de nuevo?"
-    return "I'm sorry, I did not understand your message. Can you try again?"
+def no_understand_message(user_message:str) -> str:
+    prompt = [
+            {
+                "role": "system",
+                "content": """You are an AI assistant that helps to check if a collection has a cap that the user gives. 
+                The user said something that you didn't understand, please, tell the user that you only can check if one bottle cap
+                is available in a collection but not the thing that he/she asked.
+                Only if the message is written in Spanish, note that in Spanish, translate "cap" to "chapa". 
+                Don't translate the answer if the user message is not in Spanish.            
+                """
+            },
+            {
+                "role": "user",
+                "content":user_message
+            }
+        ]
+    return generate_answer(prompt)
 
 
 def cap_to_list(similar_caps: list) -> list[Cap]:
@@ -184,7 +278,6 @@ def draw_square(image: UploadedFile, borders: list[int]) -> np.ndarray:
 def ask_bot(user_message: str) -> Message:   
     # first save the user message:
     save_history_chat_messages(Message("user", user_message))
-    # user_message.seek(0)
 
     # if the user message is not a string, it's an cap image
     if isinstance(user_message, PIL.Image.Image):
@@ -196,7 +289,7 @@ def ask_bot(user_message: str) -> Message:
             save_history_chat_messages(answer := FoundSimilarCapsMessage("assistant", message, cap_list))
             return answer
         else:
-            message = "I'm sorry, I could not find any similar cap in the collection."
+            message = translate("I'm sorry, I could not find any similar cap in the collection.")
             save_history_chat_messages(answer := Message("assistant", message))
             return answer
     elif isinstance(user_message, UploadedFile):
@@ -231,25 +324,54 @@ def ask_bot(user_message: str) -> Message:
         intention = give_me_intention(user_message)  
         if intention == "check":
             # ask the user for the image
-            answer = Message("assistant", ask_for_image())
+            answer = Message("assistant", ask_for_image(user_message))
             save_history_chat_messages(answer)
             return answer
         elif intention == "information":
             # ask the user for the information
-            answer = Message("assistant", ask_for_information())
-            save_history_chat_messages(answer)
-            return answer
-        elif intention == "spanish":
-            global language
-            language = "spanish"
-            answer = Message("assistant", "Claro que sí!!!! Puedo ayudarte a verificar si Isa tiene una chapa en su colección")
+            answer = Message("assistant", ask_for_information(user_message))
             save_history_chat_messages(answer)
             return answer
         else: 
-            answer = Message("assistant", no_understand_message())
+            answer = Message("assistant", no_understand_message(user_message))
             save_history_chat_messages(answer)
             return answer
-        
+
+def get_language(message: str) -> str:
+    prompt = [
+            {
+                "role": "system",
+                "content": """You are an AI assistant that helps to detect the language of a message. 
+                """
+            },
+            {
+                "role": "user",
+                "content": f"Please, tell me the language of the following message: {message}."
+            }
+        ]
+    return generate_answer(prompt)
+
+def translate(text:str) -> str:
+    last_user_message = get_last_user_message()
+    if not last_user_message:
+        return text
+    language = get_language(last_user_message)
+    prompt = [
+            {
+                "role": "system",
+                "content": f"""You are an AI assistant that helps to translate. 
+                Just give me the translation in {language}, even if it's the same language. Don't add more text to the answer.
+                Don't give me the language of the text, just the translation.
+                The cap in Spanish is 'chapa'.
+                """
+            },
+            {
+                "role": "user",
+                "content": f"Please, translate,translate the following message: {text} into {language}. But don't tell me the language nor the first message."
+            }
+        ]
+    return generate_answer(prompt)
+
 
 if __name__ == "__main__":
     message = "yes"
