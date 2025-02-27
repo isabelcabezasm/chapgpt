@@ -58,6 +58,8 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
     # create the cosmos db container client: 
     container = get_container()
 
+    inserted_caps = 0
+
     for image in list_images:
         try:
             if image.name.endswith(".jpg"):            
@@ -96,6 +98,7 @@ def read_from_storage_and_save_in_cosmos(csv_file_path:Path,
 
                 # insert cap in cosmos
                 insert_cap(cap, container)
+                inserted_caps += 1
         except Exception as e:          
             log(f"Failed inserting cap {image.name}. Error:{e}. ")
 

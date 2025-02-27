@@ -20,9 +20,9 @@ class AzureStorageClient:
     def __init__(self):
         self.container_client = container_client()
 
-    def list_blobs(self, limit=10) -> list:
+    def list_blobs(self, limit=10, start_with: str | None = None) -> list:
         try:
-            return self.container_client.list_blobs(results_per_page=limit)
+            return self.container_client.list_blobs(results_per_page=limit, name_starts_with=start_with)
         except Exception as e:
             log(f"Error listing blobs: {e}")
 
