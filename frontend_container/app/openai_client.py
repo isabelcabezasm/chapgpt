@@ -203,6 +203,8 @@ def confirm_cap_found(cap_number:int) -> str:
     
     if cap.brand == "LA ALHAMBRA":
         return "lavincompaeviejo! Es una Alhambra de Graná!"
+    if cap.brand == "VICTORIA":
+        return "Ehh! que estoy aliquindoi!! Qué chapa más perita! Canio.. es una Victoria de Málaga!"
 
     return translate(answer)
 
