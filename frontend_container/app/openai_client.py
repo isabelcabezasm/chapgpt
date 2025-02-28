@@ -84,20 +84,8 @@ def give_me_intention(query: str) -> str:
 
 
 def give_similar_caps() -> str:  
-    message = get_last_user_message()
-    prompt = [
-            {
-                "role": "system",
-                "content": """You are an AI assistant that helps to check if a collection has a cap that the user gives. 
-                You have found some caps similar to the one the user gave. 
-                You need to ask the user to tell you the number of the cap if he/she finds it, or to say 'no' if he/she does not find it."""
-            },
-            {
-                "role": "user",
-                "content": f"Please, ask the user to tell you the image of the cap in the same language. Message: {message}."
-            }
-        ]
-    return generate_answer(prompt)
+    message =  "I found some caps similar to the one you gave me. Please, tell me the number of the cap if you find it, or say 'no' if you don't find it."
+    return translate(message)
 
 
 def ask_for_image(user_message:str) -> str:
