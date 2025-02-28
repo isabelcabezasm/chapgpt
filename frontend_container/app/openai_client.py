@@ -200,9 +200,6 @@ def confirm_cap_found(cap_number:int) -> str:
     answer =  "Cool! We found the cap!!"
     if cap:
         answer = answer + f" The brand is {cap.brand} and the country is {cap.country}"
-    
-    if cap.brand == "LA ALHAMBRA":
-        return "lavincompaeviejo! Es una Alhambra de Graná!"
 
     return translate(answer)
 
